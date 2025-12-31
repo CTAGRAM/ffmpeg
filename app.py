@@ -343,16 +343,21 @@ def logic_add_subtitles(job_id, video_url, subtitle_content, format):
         with open(sub_path, "w") as f:
             f.write(subtitle_content)
             
-        # Hardcode subtitles
+        # Hardcode subtitles with memory optimization
+        # Use ultrafast preset, limit threads, and CRF for lower memory usage
         cmd = [
             "ffmpeg", "-y",
             "-i", video_path,
             "-vf", f"subtitles={sub_path}",
+            "-c:v", "libx264",
+            "-preset", "ultrafast",  # Fastest encoding = less memory
+            "-crf", "23",  # Constant quality mode
+            "-threads", "2",  # Limit threads to reduce memory
             "-c:a", "copy",
             output_path
         ]
         
-        success, error = run_ffmpeg(cmd, job_id=job_id)
+        success, error = run_ffmpeg(cmd, timeout=600, job_id=job_id)  # Increased timeout
         if not success: raise Exception(f"Subtitle burn failed: {error}")
         
         url, error = upload_to_r2(output_path, output_filename)
