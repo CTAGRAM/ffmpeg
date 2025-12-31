@@ -1,0 +1,610 @@
+{
+    "name": "Evolution Video - Cloud Only",
+    "nodes": [
+        {
+            "parameters": {},
+            "type": "n8n-nodes-base.manualTrigger",
+            "typeVersion": 1,
+            "position": [
+                100,
+                300
+            ],
+            "id": "manual-trigger",
+            "name": "Manual Trigger"
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "species",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.splitOut",
+            "typeVersion": 1,
+            "position": [
+                300,
+                300
+            ],
+            "id": "split-species",
+            "name": "Split Species"
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "=Species: {{ $json.species }}",
+                "hasOutputParser": true,
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.chainLlm",
+            "typeVersion": 1.7,
+            "position": [
+                500,
+                300
+            ],
+            "id": "species-prompt-generator",
+            "name": "Generate Species Prompts"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://vivid-inez-rudraksh-d0d461d8.koyeb.app/v1/images/generations",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "X-API-Key",
+                            "value": "YOUR_AI_API_KEY_HERE"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ \n  prompt: $json.output.prompt,\n  model: 'nanobanana',\n  aspect_ratio: '9:16',\n  resolution: '2K'\n}) }}"
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                700,
+                300
+            ],
+            "id": "create-image-task",
+            "name": "Request Image Generation"
+        },
+        {
+            "parameters": {
+                "amount": 60
+            },
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+                900,
+                300
+            ],
+            "id": "wait-for-image",
+            "name": "Wait for Image Processing",
+            "webhookId": "image-wait"
+        },
+        {
+            "parameters": {
+                "url": "=https://vivid-inez-rudraksh-d0d461d8.koyeb.app/v1/tasks/{{ $json.task_id }}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "X-API-Key",
+                            "value": "YOUR_AI_API_KEY_HERE"
+                        }
+                    ]
+                }
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                1100,
+                300
+            ],
+            "id": "get-image-status",
+            "name": "Get Image Status"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "image-check",
+                            "leftValue": "={{ $json.status }}",
+                            "rightValue": "completed",
+                            "operator": {
+                                "type": "string",
+                                "operation": "equals"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                }
+            },
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.3,
+            "position": [
+                1300,
+                300
+            ],
+            "id": "check-image-complete",
+            "name": "Check Image Complete"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "img-url",
+                            "name": "imageUrl",
+                            "value": "={{ $json.data[0].url }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "species-name",
+                            "name": "species",
+                            "value": "={{ $('Generate Species Prompts').item.json.output.species }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "prompt-text",
+                            "name": "prompt",
+                            "value": "={{ $('Generate Species Prompts').item.json.output.prompt }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "existed-time",
+                            "name": "existed",
+                            "value": "={{ $('Generate Species Prompts').item.json.output.existed }}",
+                            "type": "number"
+                        },
+                        {
+                            "id": "period-name",
+                            "name": "period",
+                            "value": "={{ $('Generate Species Prompts').item.json.output.period }}",
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                1500,
+                200
+            ],
+            "id": "store-image-data",
+            "name": "Store Image Data"
+        },
+        {
+            "parameters": {
+                "jsCode": "const items = $input.all();\nconst output = [];\n\n// Create loop: last → first\noutput.push({\n  videoNo: 0,\n  from: items[items.length - 1].json,\n  to: items[0].json\n});\n\n// Pair consecutive species\nfor (let i = 0; i < items.length - 1; i++) {\n  output.push({\n    videoNo: i + 1,\n    from: items[i].json,\n    to: items[i + 1].json\n  });\n}\n\nreturn output.map(item => ({ json: item }));"
+            },
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1700,
+                200
+            ],
+            "id": "group-evolutions",
+            "name": "Group Species Pairs"
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "=from: {{ $json.from.prompt }}\n\nto: {{ $json.to.prompt }}",
+                "hasOutputParser": false,
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.chainLlm",
+            "typeVersion": 1.7,
+            "position": [
+                1900,
+                200
+            ],
+            "id": "transition-prompt-gen",
+            "name": "Generate Transition Prompts"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://vivid-inez-rudraksh-d0d461d8.koyeb.app/v1/videos/image-to-video",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "X-API-Key",
+                            "value": "YOUR_AI_API_KEY_HERE"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ \n  prompt: $json.text,\n  image_url: $('Group Species Pairs').item.json.from.imageUrl,\n  model: 'kling-v2-6',\n  duration: 5,\n  aspect_ratio: '9:16'\n}) }}"
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                2100,
+                200
+            ],
+            "id": "create-video-task",
+            "name": "Request Video Generation"
+        },
+        {
+            "parameters": {
+                "amount": 300
+            },
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+                2300,
+                200
+            ],
+            "id": "wait-for-video",
+            "name": "Wait for Video Processing",
+            "webhookId": "video-wait"
+        },
+        {
+            "parameters": {
+                "url": "=https://vivid-inez-rudraksh-d0d461d8.koyeb.app/v1/tasks/{{ $json.task_id }}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "X-API-Key",
+                            "value": "YOUR_AI_API_KEY_HERE"
+                        }
+                    ]
+                }
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                2500,
+                200
+            ],
+            "id": "get-video-status",
+            "name": "Get Video Status"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "video-check",
+                            "leftValue": "={{ $json.status }}",
+                            "rightValue": "completed",
+                            "operator": {
+                                "type": "string",
+                                "operation": "equals"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                }
+            },
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.3,
+            "position": [
+                2700,
+                200
+            ],
+            "id": "check-video-complete",
+            "name": "Check Video Complete"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "video-url",
+                            "name": "videoUrl",
+                            "value": "={{ $json.data[0].url }}",
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                2900,
+                100
+            ],
+            "id": "store-video-url",
+            "name": "Store Video URL"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://arrogant-debby-rudraksh-034175cd.koyeb.app/concat",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "X-API-Key",
+                            "value": "ffmpeg_sk_9a7b3c2e1f4d8a6b5c3e7f2a1b9d4c8e"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ \n  video_urls: $('Store Video URL').all().map(item => item.json.videoUrl),\n  trim_duration: 5\n}) }}"
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                3100,
+                100
+            ],
+            "id": "concat-videos",
+            "name": "Concat Videos via FFmpeg API"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://arrogant-debby-rudraksh-034175cd.koyeb.app/merge-audio",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "X-API-Key",
+                            "value": "ffmpeg_sk_9a7b3c2e1f4d8a6b5c3e7f2a1b9d4c8e"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ \n  video_url: $json.url,\n  audio_url: 'https://pub-879b72d29274423bab4fd53b5946501d.r2.dev/background_music.mp3',\n  shortest: true\n}) }}"
+            },
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                3300,
+                100
+            ],
+            "id": "merge-audio",
+            "name": "Merge Audio via FFmpeg API"
+        }
+    ],
+    "pinData": {
+        "Manual Trigger": [
+            {
+                "json": {
+                    "title": "The Evolution Of Life",
+                    "species": [
+                        "Haikouichthys",
+                        "Tiktaalik",
+                        "Ichthyostega",
+                        "Megazostrodon",
+                        "Purgatorius",
+                        "Homo sapiens"
+                    ]
+                }
+            }
+        ]
+    },
+    "connections": {
+        "Manual Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Split Species",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Species": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Species Prompts",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Species Prompts": {
+            "main": [
+                [
+                    {
+                        "node": "Request Image Generation",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Request Image Generation": {
+            "main": [
+                [
+                    {
+                        "node": "Wait for Image Processing",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait for Image Processing": {
+            "main": [
+                [
+                    {
+                        "node": "Get Image Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Image Status": {
+            "main": [
+                [
+                    {
+                        "node": "Check Image Complete",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Image Complete": {
+            "main": [
+                [
+                    {
+                        "node": "Store Image Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Wait for Image Processing",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Store Image Data": {
+            "main": [
+                [
+                    {
+                        "node": "Group Species Pairs",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Group Species Pairs": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Transition Prompts",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Transition Prompts": {
+            "main": [
+                [
+                    {
+                        "node": "Request Video Generation",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Request Video Generation": {
+            "main": [
+                [
+                    {
+                        "node": "Wait for Video Processing",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait for Video Processing": {
+            "main": [
+                [
+                    {
+                        "node": "Get Video Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Video Status": {
+            "main": [
+                [
+                    {
+                        "node": "Check Video Complete",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Video Complete": {
+            "main": [
+                [
+                    {
+                        "node": "Store Video URL",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Wait for Video Processing",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Store Video URL": {
+            "main": [
+                [
+                    {
+                        "node": "Concat Videos via FFmpeg API",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Concat Videos via FFmpeg API": {
+            "main": [
+                [
+                    {
+                        "node": "Merge Audio via FFmpeg API",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}
