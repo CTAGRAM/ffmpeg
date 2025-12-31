@@ -261,7 +261,7 @@ def logic_concat(job_id, video_urls, trim_duration):
             for path in trimmed_files:
                 f.write(f"file '{path}'\n")
 
-        # 3. Concatenate (using copy mode since all videos from same AI source)
+        # 3. Concatenate with re-encoding for smooth transitions
         output_filename = f"concat_{uuid.uuid4().hex}.mp4"
         output_path = os.path.join(work_dir, output_filename)
         
@@ -270,7 +270,12 @@ def logic_concat(job_id, video_urls, trim_duration):
             "-f", "concat",
             "-safe", "0",
             "-i", list_path,
-            "-c", "copy",
+            "-c:v", "libx264",
+            "-preset", "medium",
+            "-crf", "23",
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac",
+            "-b:a", "128k",
             output_path
         ]
         
