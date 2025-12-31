@@ -261,7 +261,7 @@ def logic_concat(job_id, video_urls, trim_duration):
             for path in trimmed_files:
                 f.write(f"file '{path}'\n")
 
-        # 3. Concatenate
+        # 3. Concatenate with re-encoding for smooth transitions
         output_filename = f"concat_{uuid.uuid4().hex}.mp4"
         output_path = os.path.join(work_dir, output_filename)
         
@@ -270,7 +270,12 @@ def logic_concat(job_id, video_urls, trim_duration):
             "-f", "concat",
             "-safe", "0",
             "-i", list_path,
-            "-c", "copy",
+            "-c:v", "libx264",
+            "-preset", "medium",
+            "-crf", "23",
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac",
+            "-b:a", "128k",
             output_path
         ]
         
@@ -340,6 +345,11 @@ def logic_add_subtitles(job_id, video_url, subtitle_content, format):
         # Write subtitle file
         ext = "ass" if format == "ass" else "srt"
         sub_path = os.path.join(work_dir, f"subs.{ext}")
+        
+        # Debug: log first part of subtitle content
+        logger.info(f"Subtitle content preview (first 500 chars): {subtitle_content[:500]}")
+        logger.info(f"Subtitle content length: {len(subtitle_content)} characters")
+        
         with open(sub_path, "w") as f:
             f.write(subtitle_content)
             
