@@ -631,7 +631,8 @@
       "position": [
         1650,
         880
-      ]
+      ],
+      "executeOnce": true
     },
     {
       "parameters": {
