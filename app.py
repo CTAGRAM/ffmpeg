@@ -342,8 +342,8 @@ def logic_add_subtitles(job_id, video_url, subtitle_content, format):
         
         download_file(video_url, video_path)
         
-        # Write subtitle file with .txt extension (ASS format works with .txt)
-        sub_path = os.path.join(work_dir, "subtitle.txt")
+        # Write subtitle file with .ass extension (ass filter requires .ass extension)
+        sub_path = os.path.join(work_dir, "subtitle.ass")
         
         # Debug: log first part of subtitle content
         logger.info(f"Subtitle content preview (first 500 chars): {subtitle_content[:500]}")
