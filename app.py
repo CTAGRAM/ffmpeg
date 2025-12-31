@@ -342,9 +342,8 @@ def logic_add_subtitles(job_id, video_url, subtitle_content, format):
         
         download_file(video_url, video_path)
         
-        # Write subtitle file
-        ext = "ass" if format == "ass" else "srt"
-        sub_path = os.path.join(work_dir, f"subs.{ext}")
+        # Write subtitle file with .txt extension (ASS format works with .txt)
+        sub_path = os.path.join(work_dir, "subtitle.txt")
         
         # Debug: log first part of subtitle content
         logger.info(f"Subtitle content preview (first 500 chars): {subtitle_content[:500]}")
@@ -353,17 +352,13 @@ def logic_add_subtitles(job_id, video_url, subtitle_content, format):
         with open(sub_path, "w") as f:
             f.write(subtitle_content)
             
-        # Hardcode subtitles with memory optimization
-        # Use ultrafast preset, limit threads, and CRF for lower memory usage
+        # Hardcode subtitles using the 'ass' filter (works better than 'subtitles')
+        # Keep audio codec only, no video re-encoding needed
         cmd = [
             "ffmpeg", "-y",
             "-i", video_path,
-            "-vf", f"subtitles={sub_path}",
-            "-c:v", "libx264",
-            "-preset", "ultrafast",  # Fastest encoding = less memory
-            "-crf", "23",  # Constant quality mode
-            "-threads", "2",  # Limit threads to reduce memory
-            "-c:a", "copy",
+            "-vf", f"ass={sub_path}",
+            "-c:a", "copy",  # Keep original audio
             output_path
         ]
         
