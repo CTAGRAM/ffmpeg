@@ -352,12 +352,15 @@ def logic_add_subtitles(job_id, video_url, subtitle_content, format):
         with open(sub_path, "w") as f:
             f.write(subtitle_content)
             
-        # Hardcode subtitles using the 'ass' filter (works better than 'subtitles')
-        # Keep audio codec only, no video re-encoding needed
+        # Hardcode subtitles using the 'ass' filter
+        # Must re-encode video to burn in subtitles (filters require encoding)
         cmd = [
             "ffmpeg", "-y",
             "-i", video_path,
             "-vf", f"ass={sub_path}",
+            "-c:v", "libx264",
+            "-preset", "medium",  # Balanced speed/quality
+            "-crf", "23",
             "-c:a", "copy",  # Keep original audio
             output_path
         ]
