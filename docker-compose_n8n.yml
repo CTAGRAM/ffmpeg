@@ -1,0 +1,15 @@
+services:
+  n8n:
+    container_name: n8n
+    build: .
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n-data:/home/node/.n8n
+      - ./shared:/home/node/.n8n-files
+    restart: unless-stopped
+    environment:
+      - NODES_EXCLUDE=[]
+volumes:
+  n8n-data:
+    name: n8n-data

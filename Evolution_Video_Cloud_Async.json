@@ -1,0 +1,1905 @@
+{
+  "name": "Evolution Video - Cloud Based",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Species: {{ $json.species }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=**AI Assistant Task: Evolutionary Organism Image Prompt Generator**\n\n**Role:** You generate image prompts for visualizing key evolutionary organisms across Earth's history. Your role is to generate prompts that emphasize visual consistency, accurate environmental context, and a classic paleontological illustration style. All language must be literal and physically descriptive\u2014avoid idioms, abstract terms, or any language that could be misinterpreted by a model that treats words literally.\n\n**Strict Instructions for Every Prompt:**\n\n1. **Subject Placement, Action, and Evolutionary Traits:**\n    - The subject must be centered in the frame, fully visible, and presented in a clear, informative pose.\n    - Depict **an adult individual** of the species, never a juvenile or child.\n    - Depict the subject in a relaxed, anatomically plausible posture typical for the species.\n    - **Depict the subject clearly demonstrating a key evolutionary adaptation or behavior the species is known for** (e.g., tool use, fire making, upright bipedal walking, etc.).\n    - **Hominin Safety and Modesty (Strict Compliance):** For hominins and primates, ensure the depiction is professional and suitable for educational contexts. Always depict the subject generously clothed in period-appropriate animal hides, thick fur garments, or woven materials when scientifically supported. If there is no scientific evidence for clothing, ensure modesty by describing thick, natural body hair and using a strategic, relaxed pose. Never reference nudity, anatomical coverage, or the purpose of garments; describe them physically as part of the subject's appearance.\n    - Incredibly Important: If aquatic, specify: \"fully underwater,\" and describe the water as \"pale blue-green, slightly murky, with faint suspended particles visible.\"\n    - Important: The subject, if it has a face, must face or be angled toward the right.\n    - Posture, scale, and all anatomical details must appear biologically plausible.\n    - Always use the **exact species name** provided\u2014do not add clarifications or additional terms.\n\n2. **Environment (Realistic Prehistoric Setting):**\n    - Depict the subject in its **realistic, scientifically accurate prehistoric environment** (e.g., an African savanna with dry grasses, a dense Carboniferous swamp, or a Pleistocene tundra).\n    - Include subtle environmental features typical of the era, such as specific rock types, soil textures, or flora (e.g., *Glossopteris* ferns, basalt outcrops, or dry acacia-like shrubs).\n    - The water (if present) must always be described as slightly murky, with visible small particles; do **not** use the word \"clear\" alone.\n    - The environment should feel grounded and physical, providing scale and context for the organism.\n\n3. **Artistic Style:**\n    - The illustration must evoke a **classic, high-quality, scientifically accurate reconstruction**, rendered in a **detailed 3D style**.\n    - Lighting must be **soft and directional from a single source** (e.g., \"from the upper left\"), casting subtle shadows that clearly emphasize the subject's form and texture.\n    - The color palette must be **slightly desaturated, with muted and earthy tones** used throughout to reinforce a prehistoric mood.\n    - All surface textures must appear **matte and biologically accurate**, never glossy (e.g., moist amphibian skin, dry scales, fine fur). \n    - A **gentle depth of field** must be used, ensuring only the subject is in sharp focus while the immediate background environment is softly blurred to maintain focus on the organism.\n    - The final image must be clean and focused, with **no text, labels, fantasy, overly dynamic, or decorative elements**.\n\n4. **General Rules:**\n    - Never use figures of speech, ambiguous terms, or camera terminology (like \"profile,\" \"at the edge,\" \"in action\").\n    - Every visual detail you describe must be physically present in the image and directly observable.\n    - Avoid any wording that could result in awkward or unnatural poses. The Image model takes everything literally.\n    - Be precise with all descriptions to ensure scientific accuracy and prevent literal misinterpretation.\n\n5. **Content Safety:**\n    - Ensure every prompt is safe for all audiences and suitable for educational and scientific purposes.\n    - The generated prompt must adhere to all standard content policies for scientific and educational media. Do not compromise on scientific accuracy, but prioritize professional presentation of hominin subjects.\n\n**Output Structure:**\nReturn every prompt in this JSON structure:\n\n{\n  \"species\": \"<Exact species name>\",\n  \"prompt\": \"<Your literal, scientifically accurate, unambiguous image prompt here>\",\n  \"existed\": <Millions of years ago>,\n  \"period\": \"<Geological period>\"\n}\n\n**EXAMPLE OUTPUT:**\n\n{\n  \"species\": \"Homo habilis\",\n  \"prompt\": \"An adult Homo habilis is centered in the frame, angled toward the right in a crouched position on a prehistoric savanna. The subject is demonstrating the use of a sharp-edged stone flake to cut into a piece of wood, showing the evolutionary adaptation of complex tool use. The subject has thick, natural brown body hair over the limbs and torso, and is posed in a relaxed, modest manner. The face features a slightly protruding jaw and a prominent brow. The environment consists of dry, reddish-brown soil, scattered volcanic basalt rocks, and a single, softly blurred thorny acacia shrub in the background. Lighting is soft and directional from the upper left, emphasizing the matte texture of the weathered skin and the coarse hair. The illustration is a high-quality 3D reconstruction with a desaturated, earthy color palette and a gentle depth of field.\",\n  \"existed\": 2.1,\n  \"period\": \"Pleistocene\"\n}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        864,
+        240
+      ],
+      "id": "24a8a12a-e353-4fb6-8b6c-1351fad87d16",
+      "name": "SPECIES PROMPT GENERATOR",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "species",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        688,
+        240
+      ],
+      "id": "c8380fd8-5b0a-4656-a30f-894f611ae89d",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nfor (let i = 0; i < items.length; i++) {\n  items[i].json.evolutionNo = i + 1;\n}\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        240
+      ],
+      "id": "f00afa07-f300-46af-b345-86d0e56f4a78",
+      "name": "Number The Videos"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f48d7e4b-a25b-464b-b3a7-21f79a116cce",
+              "name": "evolutionNo",
+              "value": "={{ $('Number The Videos').item.json.evolutionNo }}",
+              "type": "string"
+            },
+            {
+              "id": "7918fef4-cde3-4518-a69e-92ef3d337a45",
+              "name": "species",
+              "value": "={{ $('Number The Videos').item.json.output.species }}",
+              "type": "string"
+            },
+            {
+              "id": "77cf4be4-4941-4d31-bc09-4db541e1e2ea",
+              "name": "prompt",
+              "value": "={{ $('Number The Videos').item.json.output.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "7909a259-1e59-442d-aca7-b863b7d53f14",
+              "name": "imageUrl",
+              "value": "={{ $('Format and Display image Results').item.json.img }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1168,
+        496
+      ],
+      "id": "99a87058-777d-4f80-bbe3-87f0537d8098",
+      "name": "Set Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = items;\nconst output = [];\n\n// prepend loop item\noutput.push({\n  videoNo: 0,\n  from: input[input.length - 1].json,\n  to: input[0].json,\n});\n\n// existing logic\nfor (let i = 0; i < input.length - 1; i++) {\n  output.push({\n    videoNo: i + 1,\n    from: input[i].json,\n    to: input[i + 1].json,\n  });\n}\n\nreturn output.map(item => ({ json: item }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        496
+      ],
+      "id": "cdcfeba3-00dd-4722-8aca-fc1c4cde609c",
+      "name": "Group Evolutions"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=from: \n{{ $json.from.prompt }}\n\nto: \n{{ $json.to.prompt }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an AI assistant tasked with generating *transition prompts* for evolutionary animation sequences. Each prompt represents a single continuous morphing shot between two species.\n\nIMPORTANT: your response should be a maximum of 1000 characters long.\n\nYou will be given two organisms: a **from** species and a **to** species. Your job is to generate a prompt that:\n- Describes a single animated shot\n- Follows strict visual, camera, and motion constraints\n- Focuses on a smooth biological and environmental evolution from one form to another\n\n\ud83c\udfa5 **Video Prompt Rules**\n\n1.  **Camera Behavior**\n    - The camera is **locked-down** and static throughout the shot.\n    - No zooming, no panning, no dolly movement.\n    - The entire video is a **single, unbroken take**.\n\n2.  **Subject Movement**\n    - The subject is in motion throughout (e.g., walking, swimming, crawling).\n    - It always stays **centered** in the frame. **The subject remains centered while performing a continuous motion (e.g., walking or swimming in place relative to the frame), creating a 'treadmill effect' as the background scrolls past from right to left. meaning the creature moves towards the right**\n    - The transformation happens **as the subject moves**.\n    - The morph must be **smooth, continuous, and biologically plausible**.\n    - Hybrid forms between the two species should appear, showing intermediate stages.\n\n3.  **Background Evolution**\n    - The environment evolves **in sync with the subject**.\n    - It begins in the original ecosystem of the **from** species.\n    - It ends in the ecosystem of the **to** species.\n    - Geological, atmospheric, and ecological details should shift gradually.\n\n4.  **Visual Aesthetic**\n    - Semi-realistic scientific animation style.\n    - Soft lighting with matte, biologically grounded surface textures.\n    - Muted, earthy color tones.\n    - No cartoon exaggeration, glossy CGI, or fantasy styling.\n\n5.  **Content Safety**\n    - Ensure that every prompt is safe for all audiences and suitable for educational and scientific purposes.\n    - Do not generate or describe any explicit, violent, offensive, or otherwise inappropriate content. Avoid human nudity, gore, or anything that could be flagged by content moderation systems.\n    - The generated prompt must adhere to all standard content policies for scientific and educational media.\n\n\ud83e\uddfe **Output Format**\nProduce a single, vivid, cinematic paragraph prompt that:\n- Begins with the **from** species in motion.\n- Describes the **morphing process** naturally and fluidly.\n- Ends with the **to** species completing the motion.\n- Includes the environmental transition clearly but subtly.\n- Emphasizes educational, scientific, and visual clarity.\n- **Concludes with a technical summary sentence to reinforce the core rules.**\nIMPORTANT: your response should be a maximum of 1000 characters long.\n\n---\n\n\n\n### **Example of a Generated Prompt Following New Rules:**\n\nA Tiktaalik pushes itself forward on its robust lobed fins, moving with a steady, rhythmic gait. As it continues this motion, a seamless anatomical transformation begins: its fins gradually strengthen and reshape into primitive legs with defined digits, its head lifts higher, and its skin loses its amphibious sheen, becoming drier and more reptilian. The creature's form flows through believable hybrid states until it has fully become an early tetrapod like Acanthostega. Simultaneously, the murky Devonian swamp environment with its primitive ferns fluidly morphs into a denser, more complex Carboniferous coal forest with towering scale trees and a richer terrestrial ecosystem scrolling by in the background. The fully-formed Acanthostega completes the step, now firmly on land. **The entire sequence is a single, static, unbroken take focused on the fluid, continuous morph.**\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        112,
+        880
+      ],
+      "id": "c3a1b021-6a88-49b5-8158-730dc77355f1",
+      "name": "Transition Prompt Generator",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fetch the list of species from the prompt generator\nconst videos = $('SPECIES PROMPT GENERATOR').all().map(x => x.json.output);\n// Fetch the title, providing a default if it's not found.\nconst title = $('Execute').first()?.json?.title || \"Evolutionary Countdown\";\n\n// Sort from oldest to newest based on the 'existed' property\nvideos.sort((a, b) => Number(b.existed) - Number(a.existed));\n\nlet assContent = `[Script Info]\nTitle: ${title}\nScriptType: v4.00+\nWrapStyle: 0\nPlayResX: 576\nPlayResY: 1024\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: TitleStyle,Georgia,60,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,2,2,5,10,10,10,1\nStyle: SpeciesStyle,Georgia,55,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,2,1,2,10,10,220,1\nStyle: TimeStyle,Georgia,50,&H00FFFFFF,&H000000FF,&H00000000,&H99000000,-1,0,0,0,100,100,2,0,1,0,2.5,2,10,10,160,1\nStyle: PeriodStyle,Georgia,45,&H00FFFFFF,&H000000FF,&H00000000,&H99000000,-1,0,0,0,100,100,1,0,1,0,2,2,10,10,100,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;\n\nfunction formatAssTime(seconds) {\n  const h = Math.floor(seconds / 3600);\n  const m = Math.floor((seconds % 3600) / 60);\n  const s = Math.floor(seconds % 60);\n  const cs = Math.round((seconds - Math.floor(seconds)) * 100);\n  return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;\n}\n\nfunction getUnitAndScale(years) {\n  if (years >= 1_000_000_000) return { scale: 1_000_000_000, unit: \"Billion\" };\n  if (years >= 1_000_000) return { scale: 1_000_000, unit: \"Million\" };\n  if (years >= 1_000) return { scale: 1_000, unit: \"Thousand\" };\n  return { scale: 1, unit: \"\" };\n}\n\nconst segmentDuration = 5;\nconst speciesTransitionTime = 4; \nconst transitionDuration = 200; \nconst fps = 30;\nconst timeStep = 1 / fps;\n\n// --- TITLE CARD (0s to 5s) ---\nconst titleStart = formatAssTime(0);\nconst titleEnd = formatAssTime(5);\nconst titleFadeEffect = `{\\\\fad(600, 600)}`; \nassContent += `Dialogue: 2,${titleStart},${titleEnd},TitleStyle,,0,0,0,,${titleFadeEffect}${title}\\n`;\n\n// --- PERIOD GROUPING LOGIC (Starts from Index 0) ---\nif (videos.length > 0) {\n    for (let i = 0; i < videos.length; i++) {\n        const currentPeriod = videos[i].period;\n        let endIndex = i;\n        while (endIndex + 1 < videos.length && videos[endIndex + 1].period === currentPeriod) {\n            endIndex++;\n        }\n        \n        // Start period display at 5s + (i * 5s)\n        const startTime = formatAssTime((i * segmentDuration) + 5);\n        const endTime = formatAssTime((endIndex * segmentDuration) + 5 + speciesTransitionTime);\n        \n        assContent += `Dialogue: 1,${startTime},${endTime},PeriodStyle,,0,0,0,,${currentPeriod}\\n`;\n        \n        // Period cross-fade logic\n        if (endIndex + 1 < videos.length) {\n            const nextPeriod = videos[endIndex + 1].period;\n            const nextPeriodStart = formatAssTime((endIndex * segmentDuration) + 5 + speciesTransitionTime);\n            const nextPeriodEnd = formatAssTime(((endIndex + 1) * segmentDuration) + 5);\n            const nextPeriodEffect = `{\\\\fad(${transitionDuration}, 0)}`;\n            assContent += `Dialogue: 1,${nextPeriodStart},${nextPeriodEnd},PeriodStyle,,0,0,0,,${nextPeriodEffect}${nextPeriod}\\n`;\n        }\n        i = endIndex;\n    }\n}\n\n// --- MAIN LOOP (Starts from Index 0, at 5 seconds) ---\nlet currentTime = 5;\n\nfor (let i = 0; i < videos.length; i++) {\n  const from = currentTime;\n  const to = from + segmentDuration;\n  const species = videos[i].species;\n  \n  const speciesStart = formatAssTime(from);\n  const speciesEnd = formatAssTime(from + speciesTransitionTime);\n  \n  // Fade in the very first species immediately after title (at 5s mark)\n  const fadeInDuration = (i === 0) ? 500 : 0;\n  const currentSpeciesEffect = `{\\\\fad(${fadeInDuration}, 200)}`;\n  assContent += `Dialogue: 1,${speciesStart},${speciesEnd},SpeciesStyle,,0,0,0,,${currentSpeciesEffect}${species}\\n`;\n  \n  // Logic for showing the upcoming species name during the last 1 second of the segment\n  if (i < videos.length - 1) {\n    const nextSpecies = videos[i + 1].species;\n    const nextSpeciesStart = formatAssTime(from + speciesTransitionTime);\n    const nextSpeciesEnd = formatAssTime(to);\n    const nextSpeciesEffect = `{\\\\fad(${transitionDuration}, 0)}`;\n    assContent += `Dialogue: 1,${nextSpeciesStart},${nextSpeciesEnd},SpeciesStyle,,0,0,0,,${nextSpeciesEffect}${nextSpecies}\\n`;\n  }\n  \n  // --- Timer Countdown Logic ---\n  const startAbsoluteYears = videos[i].existed * 1_000_000;\n  const endAbsoluteYears = (i < videos.length - 1) ? videos[i + 1].existed * 1_000_000 : startAbsoluteYears;\n  const absoluteSpeed = (startAbsoluteYears - endAbsoluteYears) / segmentDuration;\n\n  const totalSteps = segmentDuration * fps;\n\n  for (let j = 0; j < totalSteps; j++) {\n    const stepTime = j * timeStep;\n    const segmentFrom = from + stepTime;\n    const segmentTo = (j === totalSteps - 1) ? to : segmentFrom + timeStep;\n\n    const eventStart = formatAssTime(segmentFrom);\n    const eventEnd = formatAssTime(segmentTo);\n\n    const currentAbsoluteYears = startAbsoluteYears - stepTime * absoluteSpeed;\n    const { scale, unit } = getUnitAndScale(currentAbsoluteYears);\n    const value = Math.max(1, Math.round(currentAbsoluteYears / scale));\n    const yearString = Math.round(currentAbsoluteYears) === 1 ? \"Year\" : \"Years\";\n    const unitString = unit ? ` ${unit}` : \"\";\n    const timeText = `${value}${unitString} ${yearString}`;\n\n    assContent += `Dialogue: 0,${eventStart},${eventEnd},TimeStyle,,0,0,0,,${timeText}\\n`;\n  }\n\n  currentTime = to;\n}\n\nconst inputUrl = $('Concat Poll').item.json.result.url;\nreturn [{ json: { content: assContent, url: inputUrl } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2450,
+        880
+      ],
+      "id": "d50440fe-e4e3-4f06-a851-019128a2fa20",
+      "name": "Generate On Screen Text "
+    },
+    {
+      "parameters": {
+        "content": "# Enter Species & Generate Prompts",
+        "height": 400,
+        "width": 1440,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "28adc545-530c-4ae8-b3a5-a10a166d27fc",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.2",
+          "mode": "list",
+          "cachedResultName": "gpt-5.2"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        976
+      ],
+      "id": "85381160-8761-4539-856a-ec8042846785",
+      "name": "GPT 4.1",
+      "credentials": {
+        "openAiApi": {
+          "id": "rgPB8Jbjioqz4WKD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"species\": \"Morganucodon\",\n  \"prompt\": \"A centered, full-body view of a Morganucodon in a low, naturalistic stance, facing toward the right. The small, shrew-like creature has a soft, matte fur texture and fine whiskers. The subject is presented in a classic paleontological illustration style. The background is a minimalist, diorama-like setting, with a simple ground plane of soil and a few scattered, indistinct Triassic-era plant elements (like a single fern frond) to provide context without creating a detailed scene. Lighting is soft and directional, casting subtle shadows and highlighting the form of the animal. The color palette is muted and earthy, with slight desaturation. The overall aesthetic is of an educational museum display, focusing entirely on the subject as a scientific specimen. Stylized 3D model, not photorealistic.\",\n  \"existed\": 205,\n  \"period\": \"Pleistocene\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1008,
+        128
+      ],
+      "id": "6e5984b0-b37d-450e-a3f5-d771621d36b5",
+      "name": "Output"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Species Image & Group Evolutions",
+        "height": 320,
+        "width": 1440,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        448
+      ],
+      "id": "756c5b19-2c77-45fa-8074-75c548b2ecf4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Transition Prompts & Videos ",
+        "height": 300,
+        "width": 1440,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        800
+      ],
+      "id": "5dab40e1-b6be-43c2-8ec8-fd5aec92be90",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Trim Videos",
+        "height": 320,
+        "width": 360,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        1184
+      ],
+      "id": "d6bcfffa-c0af-4cea-ae9d-4e2aa7272c1c",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Combine Videos & Audio",
+        "height": 320,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        1184
+      ],
+      "id": "03b35aee-660d-440a-a88a-653cdc55b2fe",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# Add Text On Screen",
+        "height": 320,
+        "width": 700,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        1184
+      ],
+      "id": "548c244b-8e8b-448f-b357-a6b1f0f0d47a",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.2",
+          "mode": "list",
+          "cachedResultName": "gpt-5.2"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        864,
+        128
+      ],
+      "id": "191398cd-8b18-46f6-9789-616ea608c207",
+      "name": "GPT 5.2",
+      "credentials": {
+        "openAiApi": {
+          "id": "rgPB8Jbjioqz4WKD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://vivid-inez-rudraksh-d0d461d8.koyeb.app/v1/tasks/{{ $json.task_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "YOUR_AI_API_KEY_HERE"
+            }
+          ]
+        }
+      },
+      "id": "aa92b72f-0b3c-417d-bc02-28ea3ec8ea08",
+      "name": "Get Image Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        448,
+        512
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "Bx3vh6p49LBiEryP",
+          "name": "KIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://vivid-inez-rudraksh-d0d461d8.koyeb.app/v1/images/generations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-Key",
+              "value": "YOUR_AI_API_KEY_HERE"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({prompt: $json.output.prompt, model: \"nanobanana\", aspect_ratio: \"9:16\", resolution: \"2K\"}) }}"
+      },
+      "id": "78df632b-57cf-4c32-bea9-d6ac5105cc90",
+      "name": "Request Image Generation",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        96,
+        512
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "Bx3vh6p49LBiEryP",
+          "name": "KIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 70
+      },
+      "id": "060ac3d1-0afb-4965-bca2-832bbb2cf837",
+      "name": "Wait for image Processing Completion",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        288,
+        512
+      ],
+      "webhookId": "bb6c2821-9586-44b7-8606-2ee69a77ed75",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "img-url",
+              "name": "img",
+              "type": "string",
+              "value": "={{ $json.data[0].url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "38148f08-f4e8-40e4-bcf3-fa72bd908ff3",
+      "name": "Format and Display image Results",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        832,
+        496
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.img.parseJson().resultUrls[0] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1008,
+        496
+      ],
+      "id": "1cb5ecc3-2096-4ae6-ad57-f7627ce55d0c",
+      "name": "Download Ad Image",
+      "executeOnce": false,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "amount": 600
+      },
+      "id": "5881023d-29b8-4280-9fee-66dec949c12c",
+      "name": "Wait for Video1",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        608,
+        880
+      ],
+      "webhookId": "bb6c2821-9586-44b7-8606-2ee69a77ed75",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "url": "=https://vivid-inez-rudraksh-d0d461d8.koyeb.app/v1/tasks/{{ $('Request Video Generation').item.json.task_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "YOUR_AI_API_KEY_HERE"
+            }
+          ]
+        }
+      },
+      "id": "6c9e50f9-471c-4902-8c19-1e763c161af9",
+      "name": "Get Video Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        768,
+        880
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "Bx3vh6p49LBiEryP",
+          "name": "KIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "bc1b308a-4923-439c-b76e-2d10145a8f29",
+              "leftValue": "={{ $json.data.state == 'success'}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        640,
+        512
+      ],
+      "id": "3f604068-b93f-4161-b223-caba61cf298f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "bc1b308a-4923-439c-b76e-2d10145a8f29",
+              "leftValue": "={{ $json.data.state == 'success' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        976,
+        880
+      ],
+      "id": "7667ed73-ad7c-401d-8e76-6b845e976250",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        64,
+        208
+      ],
+      "id": "b428e92b-940c-4664-a772-184511cafaf4",
+      "name": "Execute"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://vivid-inez-rudraksh-d0d461d8.koyeb.app/v1/videos/image-to-video",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-Key",
+              "value": "YOUR_AI_API_KEY_HERE"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({prompt: $json.text, image_url: $('Group Evolutions').item.json.from.imageUrl, model: \"kling-v2-6\", duration: 5, aspect_ratio: \"9:16\"}) }}"
+      },
+      "id": "064768e2-a31e-4c86-9db5-b651b5e08f60",
+      "name": "Request Video Generation",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        432,
+        880
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "Bx3vh6p49LBiEryP",
+          "name": "KIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "video-url-id",
+              "name": "videoUrl",
+              "value": "={{ $json.data[0].url }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1450,
+        880
+      ],
+      "id": "store-video-urls",
+      "name": "Store Video URLs"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://arrogant-debby-rudraksh-034175cd.koyeb.app/concat",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-Key",
+              "value": "ffmpeg_sk_9a7b3c2e1f4d8a6b5c3e7f2a1b9d4c8e"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({video_urls: $('Store Video URLs').all().map(x => x.json.videoUrl), trim_duration: 5}) }}"
+      },
+      "id": "539369d8-1e44-4c38-aa12-babdb5fd95ce",
+      "name": "Concat Start",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1650,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "167adcc6-8544-432d-98c0-f0da4ea896c6",
+      "name": "Concat Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        1850,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://arrogant-debby-rudraksh-034175cd.koyeb.app/tasks/{{ $('Concat Start').item.json.job_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "ffmpeg_sk_9a7b3c2e1f4d8a6b5c3e7f2a1b9d4c8e"
+            }
+          ]
+        }
+      },
+      "id": "d1660402-7eb6-4118-a445-852d5dabd816",
+      "name": "Concat Poll",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2050,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "73c6dbfd-8eec-40a5-9e39-9f6f5a62647c",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "2b9d4e6d-9dec-4cc6-8918-a5a674a91de7",
+      "name": "Concat Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2250,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://arrogant-debby-rudraksh-034175cd.koyeb.app/merge-audio",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-Key",
+              "value": "ffmpeg_sk_9a7b3c2e1f4d8a6b5c3e7f2a1b9d4c8e"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({video_url: $json.url, audio_url: \"https://pub-879b72d29274423bab4fd53b5946501d.r2.dev/background_music.mp3\", shortest: true}) }}"
+      },
+      "id": "9e0e3626-f029-4db4-89e7-37de642777c2",
+      "name": "Merge Audio Start",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2650,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "b90c0da3-584d-43a4-b287-dba5e268275e",
+      "name": "Merge Audio Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        2850,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://arrogant-debby-rudraksh-034175cd.koyeb.app/tasks/{{ $('Merge Audio Start').item.json.job_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "ffmpeg_sk_9a7b3c2e1f4d8a6b5c3e7f2a1b9d4c8e"
+            }
+          ]
+        }
+      },
+      "id": "c36446dc-318e-4aab-afc2-3ac89f0c0ddd",
+      "name": "Merge Audio Poll",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3050,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "107d54dd-3927-4d39-ae62-2931337b18ce",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "6c8cba43-45d3-4fd9-adf2-a4fb0a6ad3f2",
+      "name": "Merge Audio Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3250,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://arrogant-debby-rudraksh-034175cd.koyeb.app/add-subtitles",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-Key",
+              "value": "ffmpeg_sk_9a7b3c2e1f4d8a6b5c3e7f2a1b9d4c8e"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({video_url: $json.result.url, subtitle_content: $('Generate On Screen Text ').first().json.content, format: \"ass\"}) }}"
+      },
+      "id": "8f20d178-aee6-4b36-9cda-cfe74038c2c2",
+      "name": "Add Subtitles Start",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3450,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "645c04ff-dd5e-414e-abba-08ad75b4319b",
+      "name": "Add Subtitles Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        3650,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://arrogant-debby-rudraksh-034175cd.koyeb.app/tasks/{{ $('Add Subtitles Start').item.json.job_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "ffmpeg_sk_9a7b3c2e1f4d8a6b5c3e7f2a1b9d4c8e"
+            }
+          ]
+        }
+      },
+      "id": "906c48d1-887b-40bd-aa0f-cacc7e5f143c",
+      "name": "Add Subtitles Poll",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3850,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c63151ab-af13-4ecf-8bcc-ab08654320ef",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "4f746619-d2a8-4cb4-a006-1a8507606ddc",
+      "name": "Add Subtitles Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        4050,
+        880
+      ]
+    }
+  ],
+  "pinData": {
+    "Execute": [
+      {
+        "json": {
+          "title": "The Evolution Of Gorillas",
+          "species": [
+            "Haikouichthys",
+            "Tiktaalik",
+            "Ichthyostega",
+            "Megazostrodon",
+            "Purgatorius",
+            "Plesiadapis",
+            "Aegyptopithecus",
+            "Proconsul",
+            "Afropithecus",
+            "Chororapithecus abyssinicus",
+            "Gorilla gorilla",
+            "Gorilla beringei"
+          ]
+        }
+      }
+    ],
+    "Send image Generation Request to KIE.AI API": [
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "75cb008e783e007eae41d53d148180a7",
+            "recordId": "75cb008e783e007eae41d53d148180a7"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "b4729f5af4aca3eb1de6ef837ab5765e",
+            "recordId": "b4729f5af4aca3eb1de6ef837ab5765e"
+          }
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "d246c3704047fd2fa95a2a563a6c767a",
+            "recordId": "d246c3704047fd2fa95a2a563a6c767a"
+          }
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "c3aca8eb023fe2ee5a462b1f37f02ee7",
+            "recordId": "c3aca8eb023fe2ee5a462b1f37f02ee7"
+          }
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "831331eeacac4a4216287d21cce760c2",
+            "recordId": "831331eeacac4a4216287d21cce760c2"
+          }
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "8a6984250d2322dfc58b27ba1f06d0a6",
+            "recordId": "8a6984250d2322dfc58b27ba1f06d0a6"
+          }
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "57750e5d11c7a9267273b66a206c62ca",
+            "recordId": "57750e5d11c7a9267273b66a206c62ca"
+          }
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "1621e461065b66fb29dc6d502abcc6be",
+            "recordId": "1621e461065b66fb29dc6d502abcc6be"
+          }
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "0432613c5a76a15c1a28fe058ebb0b38",
+            "recordId": "0432613c5a76a15c1a28fe058ebb0b38"
+          }
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "c6af5e8a82bfd7bac5e5e8df4b2fbdfa",
+            "recordId": "c6af5e8a82bfd7bac5e5e8df4b2fbdfa"
+          }
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "7f29fb844b8eb900e58f0844491539ab",
+            "recordId": "7f29fb844b8eb900e58f0844491539ab"
+          }
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "aa9a5272c3e61618ab05a7afa5623f0d",
+            "recordId": "aa9a5272c3e61618ab05a7afa5623f0d"
+          }
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      }
+    ],
+    "SPECIES PROMPT GENERATOR": [
+      {
+        "json": {
+          "output": {
+            "species": "Haikouichthys",
+            "prompt": "An adult Haikouichthys is centered in the frame, fully underwater, angled toward the right, with the entire body fully visible in a relaxed swimming posture. The fish is demonstrating early vertebrate adaptations by showing distinct paired fin folds held slightly extended for stable, controlled movement, and a clearly visible row of gill openings along the side of the head. The body is slender and eel-like with a narrow tail fin, faint segmental muscle bands along the flanks, and a small head with simple eyes. The water is pale blue-green, slightly murky, with faint suspended particles visible. The seafloor beneath is a shallow Cambrian marine setting with fine gray-brown silt, scattered small rounded pebbles, and low patchy mats of microbial film; a few softly blurred frond-like algae forms and small benthic invertebrate shapes are present in the background for scale. Lighting is soft and directional from the upper left, casting subtle shadows that emphasize the matte texture of the skin and the body contours. The illustration is a classic, scientifically accurate detailed 3D reconstruction with a slightly desaturated, muted earthy color palette and a gentle depth of field, with only the subject in sharp focus and the background softly blurred, and no text or labels.",
+            "existed": 518,
+            "period": "Cambrian"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Tiktaalik",
+            "prompt": "An adult Tiktaalik is centered in the frame, fully visible, angled toward the right in a relaxed posture at the shallow edge of a Late Devonian river channel. The body is mostly supported in the water while the front fins press against a firm, muddy sandbar, clearly demonstrating the key adaptation of robust, limb-like fins bearing weight in shallow water. The head is broad and flat with dorsally placed eyes, and the neck region is shown with a distinct separation between head and shoulder area. The fin surfaces show bony internal supports as subtle contours under matte, fine scales, and the tail fin extends behind with a gentle curve. The environment shows slightly murky pale blue-green water with faint suspended particles visible, a rippled brown mudflat with wet sediment texture, scattered rounded pebbles, and sparse Devonian shoreline plants resembling low, simple vascular stems and small fern-like fronds. Soft directional lighting comes from the upper left, casting subtle shadows under the head and fins. The illustration is a high-quality, scientifically accurate 3D reconstruction with a slightly desaturated, muted earthy color palette, matte biological textures, and a gentle depth of field that keeps Tiktaalik in sharp focus while the background plants and riverbank are softly blurred. No text or labels.",
+            "existed": 375,
+            "period": "Devonian"
+          }
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Ichthyostega",
+            "prompt": "An adult Ichthyostega is centered in the frame, fully visible and angled toward the right, resting in a relaxed low posture at the shallow edge of a Late Devonian freshwater swamp. The animal is demonstrating a key evolutionary adaptation by propping the front of its body up on robust, weight-bearing forelimbs while the hind limbs and long tail remain partly in the water, showing early tetrapod support and controlled movement between water and land. The body is broad and flattened with a thick neck, a wide head with upward-facing eyes, and matte, dark mottled skin with subtle scale-like texture. The environment shows muddy brown soil with wet silt, shallow slightly murky water with faint suspended particles visible, scattered waterlogged woody debris, and dense Devonian wetland plants including low clubmoss-like vegetation and tall horsetail-like stems; the immediate background is softly blurred. Lighting is soft and directional from the upper left, casting gentle shadows that define the limbs, ribs, and tail. The illustration is a detailed, scientifically accurate 3D reconstruction with a slightly desaturated, earthy color palette, matte biological textures, and a gentle depth of field, with no text or labels.",
+            "existed": 365,
+            "period": "Devonian"
+          }
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Megazostrodon",
+            "prompt": "An adult Megazostrodon is centered in the frame, fully visible, angled toward the right in a low, relaxed quadrupedal stance on a dry forest floor. The subject is demonstrating a key evolutionary adaptation by using a slightly elongated snout to sniff and locate small insects among leaf litter, with the forepaws gently parting the loose debris. The body is covered in short, dense, matte fur with subtle brown and gray tones; the tail is moderately long and furred; the head shows a small mammaliaform skull shape with differentiated teeth visible in a slightly open mouth. The environment is a Late Triassic woodland with reddish-brown sandy soil, scattered dry leaf litter, small cycad plants, low fern clusters, and a few conifer-like trunks in the softly blurred background, with occasional small pebbles and weathered sandstone fragments on the ground. Lighting is soft and directional from the upper left, casting subtle shadows that emphasize the matte fur texture and the contours of the limbs and snout. The illustration is a high-quality, scientifically accurate 3D reconstruction with a slightly desaturated, muted earthy color palette and a gentle depth of field, with no text or labels.",
+            "existed": 205,
+            "period": "Triassic"
+          }
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Purgatorius",
+            "prompt": "An adult Purgatorius is centered in the frame, fully visible and angled toward the right, clinging in a relaxed posture to a rough-barked tree trunk with all four limbs. The animal is demonstrating an early primate-related adaptation by grasping a sturdy branch with curved fingers and toes while reaching its right forepaw toward a cluster of small, dark red berries, showing arboreal climbing and grasping ability. The subject has a small, slender body, a long balancing tail held slightly arched behind it, short dense matte fur in muted brown and gray tones, a narrow snout, small rounded ears, and forward-facing eyes. The environment is an early Paleocene woodland with damp, dark soil, scattered leaf litter, fallen decaying logs with matte textures, and low-growing fern-like plants and broad-leaved shrubs; a few rounded stones and a partially exposed pale sedimentary rock layer are visible near the base of the tree. Lighting is soft and directional from the upper left, casting gentle shadows that define the fur and limb contours. The illustration is a high-quality, scientifically accurate 3D reconstruction with a slightly desaturated, earthy color palette and a gentle depth of field, keeping only the subject in sharp focus while the immediate background is softly blurred, with no text or decorative elements.",
+            "existed": 66,
+            "period": "Paleocene"
+          }
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Plesiadapis",
+            "prompt": "An adult Plesiadapis is centered in the frame, fully visible, angled toward the right, clinging in a relaxed posture on a thick tree trunk with bark texture clearly visible. The subject is demonstrating arboreal grasping and climbing, with strong curved claws gripping the bark and the body held close to the trunk; the head is turned slightly to the right with forward-facing eyes visible. The animal has dense, matte fur with slightly desaturated brown and gray tones, a long tail held gently downward for balance, and a short snout with small rounded ears. The environment is a Paleocene woodland with damp, dark brown soil, scattered leaf litter, and low ferns and broadleaf plants; a few softly blurred tree trunks and branches extend into the background, with muted green foliage and a light haze suggesting humid air. Lighting is soft and directional from the upper left, casting subtle shadows that describe the fur and limb anatomy. The illustration is a classic, high-quality, scientifically accurate 3D reconstruction with a slightly desaturated, earthy color palette, matte biological textures, and a gentle depth of field that keeps only the subject in sharp focus, with no text or decorative elements.",
+            "existed": 58,
+            "period": "Paleocene"
+          }
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Aegyptopithecus",
+            "prompt": "An adult Aegyptopithecus is centered in the frame, fully visible, angled toward the right, clinging in a relaxed posture to a thick tree branch with all four limbs. The subject is demonstrating arboreal grasping adaptation by holding a small cluster of ripe fruit in one hand while the other hand and both feet grip the branch with opposable digits; the long tail is held in a gentle curve for balance without wrapping the branch. The body is covered in short, dense, matte fur in muted brown and gray tones; the face shows a short muzzle, forward-facing eyes, and small rounded ears. The environment is a late Eocene North African riverine woodland with sandy, light-brown soil visible through gaps in the foliage, scattered rounded pebble clusters near a shallow water edge, and several broad-leaved trees with simple oval leaves; a few fern fronds and low shrubs sit beneath the branch. The water in the background is pale blue-green, slightly murky, with faint suspended particles visible. Lighting is soft and directional from the upper left, casting subtle shadows that emphasize the fur texture and the limb muscles. The illustration is a classic, high-quality, scientifically accurate reconstruction rendered in a detailed 3D style with a slightly desaturated, muted earthy color palette and a gentle depth of field, keeping only the subject in sharp focus while the immediate background is softly blurred. No text or labels.",
+            "existed": 30,
+            "period": "Eocene"
+          }
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Proconsul",
+            "prompt": "An adult Proconsul is centered in the frame, fully visible, angled toward the right on a thick, horizontal tree branch in a warm early Miocene woodland. The subject is in a relaxed, anatomically plausible quadrupedal climbing posture with both hands gripping the bark and one foot placed forward, clearly demonstrating an early ape adaptation of grasping hands and feet for arboreal movement, with visible opposable thumbs and large, curved finger and toe bones. The body has short, dense, matte brown fur with slightly lighter fur on the underside; the face has a short snout, forward-facing eyes, and small ears, with a calm, neutral expression. The environment includes a layered woodland canopy with broadleaf trees, tangled lianas, and clusters of large ferns below; the ground far beneath shows reddish-brown soil with scattered rounded stones and leaf litter. Lighting is soft and directional from the upper left, casting gentle shadows that define the fur texture and limb anatomy. The illustration is a high-quality, scientifically accurate 3D reconstruction with a slightly desaturated, muted earthy color palette and a gentle depth of field, with only the subject in sharp focus and the background softly blurred, and no text or labels.",
+            "existed": 19,
+            "period": "Miocene"
+          }
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Afropithecus",
+            "prompt": "An adult Afropithecus is centered in the frame, fully visible, angled toward the right, perched in a stable, relaxed seated posture on a thick horizontal tree branch. The subject is demonstrating powerful chewing adaptation by holding a hard-shelled nut between both hands and biting into it with broad jaws and thick molar teeth, with small shell fragments visible near the mouth and on the branch. The face is angled toward the right with a shortened snout, robust jawline, and forward-facing eyes. The body has dense, dark brown matte fur with slightly lighter fur on the underside and inner limbs, and the hands and feet show strong grasping digits wrapped around the bark. The environment is an early Miocene African woodland with multiple medium-height trees, rough gray-brown bark, scattered lianas, and a ground layer of dry leaf litter and patchy reddish-brown soil visible through gaps in the foliage. In the softly blurred background there are additional tree trunks, low shrubs, and a few muted green fern clumps, with no modern human objects present. Lighting is soft and directional from the upper left, casting gentle shadows that emphasize the matte fur texture and the rough tree bark. The illustration is a high-quality, scientifically accurate 3D reconstruction with a slightly desaturated, muted earthy color palette and a gentle depth of field, with the subject in sharp focus and the background softly blurred, and no text or labels.",
+            "existed": 17,
+            "period": "Miocene"
+          }
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Chororapithecus abyssinicus",
+            "prompt": "An adult Chororapithecus abyssinicus is centered in the frame, fully visible, angled toward the right, resting in a stable, relaxed posture on a thick tree branch. The subject is demonstrating powerful grasping and climbing behavior by using long curved fingers and opposable thumbs to hold the branch while the other hand pulls leafy twigs closer to the mouth, showing an adaptation for arboreal locomotion and browsing. The body is covered in dense, matte dark brown fur with slightly lighter fur on the cheeks and underside, and the face shows a forward-facing gaze, a broad nose, and a strong jaw with thickened cheek region consistent with chewing tough plant material. The environment is a late Miocene Ethiopian woodland with reddish-brown soil visible through gaps in vegetation, scattered weathered volcanic rocks, and multiple broad-leaved trees and shrubs; a few dry leaves and small seed pods lie on a nearby branch, with the background softly blurred. Lighting is soft and directional from the upper left, casting gentle shadows that define the fur texture and the muscular limbs. The illustration is a high-quality, scientifically accurate 3D reconstruction with a slightly desaturated, muted earthy color palette, matte biological textures, and a gentle depth of field, with no text or decorative elements.",
+            "existed": 8,
+            "period": "Miocene"
+          }
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Gorilla gorilla",
+            "prompt": "An adult Gorilla gorilla is centered in the frame, fully visible, angled toward the right in a relaxed knuckle-walking stance on the forest floor. The subject is demonstrating the evolutionary adaptation of powerful knuckle-walking locomotion and robust forelimb anatomy, with the weight supported on broad knuckles and the long arms slightly bent. The subject has dense, matte black fur with a broad chest, large shoulders, and a heavy jaw, and a calm facial expression with dark eyes directed toward the right. The environment is a realistic Central African lowland rainforest with dark brown, damp soil, scattered leaf litter, small fallen branches, and several large buttress tree trunks; softly blurred understory plants include broad-leafed tropical shrubs and low ferns. Lighting is soft and directional from the upper left, casting gentle shadows that define the fur texture and muscular form. The illustration is a high-quality, scientifically accurate 3D reconstruction with a slightly desaturated, muted earthy color palette and a gentle depth of field, with no text or decorative elements.",
+            "existed": 0.5,
+            "period": "Pleistocene"
+          }
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "output": {
+            "species": "Gorilla beringei",
+            "prompt": "An adult Gorilla beringei is centered in the frame, fully visible, angled toward the right in a relaxed seated posture on a damp forest floor. The subject is demonstrating deliberate knuckle-walking anatomy by resting weight on the broad knuckles of the front hands while the other hand gently pulls leafy stems toward the mouth, showing the evolutionary adaptation of powerful forelimbs and specialized hand posture for terrestrial movement and foraging. The face is angled toward the right with a pronounced brow ridge, wide nasal openings, and a calm expression; the body is covered in dense, matte black-brown fur with a slightly lighter gray area on the back typical of an adult male. The environment is a high-altitude montane forest with dark volcanic soil, scattered basalt rocks, low green herbaceous plants, and several large fern fronds, with softly blurred moss-covered tree trunks and bamboo-like stems in the background. The lighting is soft and directional from the upper left, casting subtle shadows that emphasize the fur texture and muscular shoulders. The illustration is a classic, scientifically accurate reconstruction rendered in a detailed 3D style with a slightly desaturated, earthy color palette and a gentle depth of field, with only the subject in sharp focus and the immediate background softly blurred. No text or labels.",
+            "existed": 0.02,
+            "period": "Holocene"
+          }
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      }
+    ],
+    "Transition Prompt Generator": [
+      {
+        "json": {
+          "text": "An adult *Gorilla beringei* stays centered as it knuckle-walks in place toward the right, one hand intermittently drawing leafy stems to its mouth; as the forest floor scrolls past right-to-left, its dense fur subtly thins and slicks down, skin darkens to a matte aquatic texture, the torso elongates and narrows, shoulders and hips compress, and the limbs smoothly shorten and merge into continuous lateral fin folds. The face progressively streamlines: brow ridge softens, muzzle retracts, eyes reduce, and the neck blends into a small fishlike head as a row of gill openings appears and begins rhythmic pulsing; the spine flexion shifts from weight-bearing to sinuous lateral swimming, forming believable hybrid stages from semi-aquatic crawler to eel-like swimmer. In sync, volcanic soil and ferns gradually dissolve into flooding water, then fully into a pale blue-green murky Cambrian sea; basalt rocks become rounded pebbles, plants fade into microbial mats and frond-like algae silhouettes, and suspended particles drift by. The motion resolves as an adult *Haikouichthys* swims steadily to the right, centered, fins held slightly extended. **Single static locked-off camera, one unbroken take, treadmill-effect rightward motion with continuous biologically plausible morph and synchronized habitat transition.**"
+        }
+      },
+      {
+        "json": {
+          "text": "An adult Haikouichthys swims steadily toward the right, centered as if on a treadmill while the Cambrian seafloor scrolls past right-to-left in pale blue\u2011green, particle-filled water. As it keeps a smooth tailbeat, its slender eel-like body gradually deepens and flattens; the paired fin folds thicken into more defined lobed fins, and the narrow tail fin broadens. Along the head, the row of gill openings subtly reorganizes as the skull widens; the eyes migrate slightly upward and the snout becomes broader, with a clearer neck-like separation emerging behind the head. The fins gain internal bony struts visible as gentle contours beneath matte scales, and the front pair begins pressing rhythmically into firmer sediment as the water shallows. In sync, gray-brown silt and microbial mats transition into a rippled muddy sandbar with wet sheen, more pebbles, and sparse Devonian shoreline stems and fern-like fronds replacing simple algae, all under soft upper-left light. By the end, a fully formed Tiktaalik braces its robust forefins on the mud at a Late Devonian river edge, still moving forward in place. **Single static locked camera, one unbroken take, centered subject moving right with background scrolling right-to-left, smooth continuous morph and environment shift.**"
+        }
+      },
+      {
+        "json": {
+          "text": "A centered adult Tiktaalik rhythmically hauls itself to the right in place, front fins planting and pushing on a firm muddy sandbar while its tail swishes in shallow, pale blue\u2011green Late Devonian water; suspended particles drift past as the riverbank scrolls right\u2011to\u2011left. As the forward strokes continue, the fin rays thicken into wrist-like joints, then broaden into proto-hands with distinct digits; the shoulder girdle enlarges, the neck becomes more muscular and defined, ribs subtly expand under matte scales, and the torso flattens into a sturdier, early-tetrapod profile. Hybrid stages show a progressively stronger forelimb lift as the hind region still drags and paddles. In sync, the sandy channel edge gradually becomes a wetter swamp margin: mud darkens to silty brown, pebbles give way to waterlogged woody debris, and sparse low stems transition into denser clubmoss-like groundcover and tall horsetail-like stands under the same soft upper-left light. The morph completes as an adult Ichthyostega props its front body on robust forelimbs while hind limbs and long tail remain partly in the water, continuing the rightward crawl. **Single static locked camera, one unbroken take; subject stays centered with treadmill motion as background scrolls right-to-left; smooth continuous morph with synchronized habitat transition.**"
+        }
+      },
+      {
+        "json": {
+          "text": "An adult Ichthyostega stays centered as it prop-walks toward the right in a steady \u201ctreadmill\u201d crawl, forelimbs pressing into wet silt while hind limbs and the long tail sweep through shallow, particle-clouded swamp water. As the stride continues, its broad flattened trunk subtly narrows and becomes more elevated; ribs and shoulders reorganize for a more efficient terrestrial gait; the neck lengthens, the head streamlines, and the eyes shift from upward-facing to more forward-oriented. Matte, mottled skin gradually dries and breaks into finer scales, then transitions into a faint downy covering that thickens into short, dense fur; the tail becomes more uniformly furred and less paddle-like. Digits refine and paws become more compact as the snout elongates and differentiated teeth become visible with gentle sniffing motions. In sync, muddy Devonian shallows with woody debris and clubmoss-horsetail wetlands dry into reddish sandy soil; water recedes into damp patches, leaf litter accumulates, cycads and ferns replace swamp plants, and conifer-like trunks appear as the Triassic woodland scrolls right-to-left. The fully formed Megazostrodon continues the same centered forward motion, nosing and lightly pawing through litter. **Single static locked camera, one unbroken take, subject centered with continuous motion, smooth biologically plausible morph, background evolves in sync.**"
+        }
+      },
+      {
+        "json": {
+          "text": "An adult Megazostrodon pads to the right in a low, steady quadrupedal trot, centered as the forest floor scrolls right-to-left; it pauses mid-stride to sniff and rake leaf litter with delicate forepaws. While it keeps moving, its skull subtly refines: the snout narrows and lengthens, the eyes drift slightly forward, ears round, and the wrists and ankles become more flexible as digits grow longer and gently curve; the torso slims, the tail lengthens and becomes a more active counterbalance, and its gait transitions from ground-scurrying to confident climbing-like steps, passing through clear hybrid mammaliaform stages. In sync, the Late Triassic reddish sandy soil darkens and dampens, cycads and conifer-like trunks dissolve into broad-leaved understory and decaying logs, with a pale sedimentary layer emerging near a new rough-barked trunk. The fully formed Purgatorius continues rightward, gripping the trunk and reaching to pluck dark red berries with grasping fingers. **Single static locked camera, one unbroken take; subject centered with treadmill motion; smooth plausible morph and matching habitat shift; muted semi-realistic scientific 3D.**"
+        }
+      },
+      {
+        "json": {
+          "text": "An adult Purgatorius clings to a rough-barked trunk while \u201cclimbing in place\u201d toward the right, its curved fingers and toes alternately gripping as the woodland scrolls right-to-left like a treadmill; it reaches its right forepaw toward a small cluster of dark red berries. Mid-motion, its limbs thicken and lengthen, joints becoming more robust; curved digits subtly shift into stronger, more clawed grips, the torso deepens, and the head broadens as the narrow snout shortens, producing believable hybrid stages with increasingly forward-set eyes and denser, matte fur. The long balancing tail gradually drops to a gentler downward hang as the body hugs the bark more closely, transitioning into an adult Plesiadapis that continues the same steady climb. In sync, the early Paleocene forest subtly densifies: leaf litter and damp soil deepen in color, ferny groundcover gives way to more abundant broadleaf plants, extra trunks and branches drift by in soft blur, and a light humid haze becomes more apparent under the same upper-left soft lighting. **Single static locked camera, one unbroken take; subject centered climbing rightward with continuous biologically plausible morph while background scrolls right-to-left and evolves smoothly.**"
+        }
+      },
+      {
+        "json": {
+          "text": "An adult Plesiadapis clings and climbs steadily to the right along a thick, bark-textured trunk, centered in frame as the woodland scrolls right-to-left. With each rhythmic reach, its curved claws shorten and flatten into broader fingertips; opposable digits gradually emerge, wrists and ankles become more flexible, and the limbs lengthen into a more primate-like grasp. The snout subtly shortens, the face broadens, and the eyes appear more forward-facing; fur remains dense and matte but refines in texture as the tail thickens then becomes more balanced and gently arced. Intermediate hybrids show partial nails and improving precision grip until it becomes an adult Aegyptopithecus, now moving hand-over-hand along a sturdy branch and briefly holding a small cluster of ripe fruit while the other hand and both feet grip securely. In sync, the Paleocene damp soil and leaf litter shift to lighter sandy ground with scattered pebbles; low ferns and broadleaf understory transition into late Eocene riverine woodland, and a pale blue-green, slightly murky water edge forms in the softly blurred background under the same upper-left soft light. **Single static locked camera, one unbroken take, centered subject \u201ctreadmill\u201d motion to the right with smooth biological and environmental morphing.**"
+        }
+      },
+      {
+        "json": {
+          "text": "An adult **Aegyptopithecus** clings and climbs steadily along a thick branch toward the right, centered in frame with a treadmill effect as the late Eocene riverine woodland scrolls past right-to-left; it briefly shifts the small fruit cluster to balance, showing opposable digits and a long tail arcing for stability. As it continues the rhythmic hand-over-hand motion, the morph begins smoothly: the tail subtly shortens and dwindles, the torso broadens and shoulders become more mobile, limb proportions adjust for stronger arboreal climbing, hands and feet enlarge with more curved digits, and the face refines with a shorter snout while maintaining forward-facing eyes; matte fur remains but shifts to warmer browns with a lighter underside, passing through clear hybrid stages. In sync, sandy pale soil and pebble clusters transition to richer reddish-brown forest floor far below, the murky blue-green water recedes, and the canopy thickens with tangled lianas and larger fern clusters, arriving in a warm early Miocene woodland. The fully formed **Proconsul** continues the same relaxed quadrupedal climbing gait, centered and calm. **Single static locked camera, no cuts, no camera motion; subject stays centered moving right as background scrolls; continuous biologically plausible morph with synchronized habitat transition.**"
+        }
+      },
+      {
+        "json": {
+          "text": "An adult **Proconsul** climbs steadily to the right along a thick horizontal branch, hands and feet rhythmically gripping bark in a calm quadrupedal gait, staying centered as the woodland background scrolls right-to-left. While it moves, its face subtly shortens and broadens, the zygomatic arches and jaw deepen, and the muzzle becomes more compact; the neck and shoulders thicken slightly as the torso settles into a more stable, semi-seated perch between climbing cycles. The hands remain opposable and grasping, but the forearms and jaw muscles become more robust; the teeth transition through believable intermediate forms until broad molars and a heavier mandible appear. A hard-shelled nut materializes in its hands through the morph, and the now **Afropithecus** bites down with powerful chewing, with small shell fragments accumulating on the branch. In sync, the canopy shifts from liana-tangled broadleaf woodland to a slightly drier early Miocene African woodland: bark turns rougher gray-brown, understory ferns thin to scattered clumps, and leaf litter and patchy reddish soil become more visible through gaps. **Single static locked-off camera, one unbroken take, centered subject moving right with treadmill effect, smooth continuous morph and synchronized habitat transition.**"
+        }
+      },
+      {
+        "json": {
+          "text": "An adult Afropithecus stays centered as it moves to the right in a steady branch-to-branch crawl, arms flexing and feet gripping bark while the woodland scrolls right-to-left behind it. It pauses mid-stride to brace a hard-shelled nut in both hands and bites down; as the chewing continues, the skull and face begin a smooth, plausible shift\u2014snout subtly reshapes, cheek region thickens, the nose broadens, and the jawline and molar area transition toward tougher-foliage processing. Fingers lengthen and curve, thumbs become more opposable, and the shoulders and forelimbs read increasingly adapted for confident climbing and browsing; the nut fragments taper off as the hands gradually start drawing leafy twigs toward the mouth. In sync, early Miocene African woodland textures slowly grade into late Miocene Ethiopian woodland: trunks and lianas thin into broader-leaved trees and shrubs, reddish-brown soil becomes more prominent, and weathered volcanic rocks appear as the background continues to drift. The fully formed Chororapithecus abyssinicus completes the rightward crawl, one hand gripping the branch while the other pulls foliage to feed. **Single static locked camera, one unbroken take, treadmill-style centered subject moving right as a continuous, biologically plausible morph with smoothly evolving habitat.**"
+        }
+      },
+      {
+        "json": {
+          "text": "An adult **Chororapithecus abyssinicus** stays centered as it **moves toward the right in a steady climbing \u201ctreadmill\u201d rhythm** along a thick branch, alternating powerful hand-over-hand grips; while it reaches for leaves, its shoulders broaden and sink, the chest deepens, and the arms lengthen and thicken. The long curved fingers gradually shorten and stiffen, thumbs reposition, and the wrists become more weight-bearing; the face subtly widens, the jaw grows heavier, and the cheek region becomes more robust as dark brown fur slowly darkens toward matte black. The branch descends into a trunk and the forelimbs transition from grasping to **knuckle contact**, with intermediate hybrid postures as the torso becomes bulkier and the gait shifts into measured knuckle-walking. In sync, the late Miocene Ethiopian woodland scrolls right-to-left: reddish soil and volcanic rocks fade into darker damp earth, leaf litter increases, broad-leaved trees densify into buttress trunks, and the understory becomes lush with low ferns and tropical shrubs. The fully formed **Gorilla gorilla** continues calm knuckle-walking to the right on the rainforest floor. **Single static locked camera, one unbroken take, centered subject in continuous motion with smooth biological morph and synchronized habitat transition, no zoom/pan.**"
+        }
+      },
+      {
+        "json": {
+          "text": "An adult *Gorilla gorilla* knuckle-walks steadily toward the right in place, centered in frame, long arms swinging with heavy, controlled weight on broad knuckles; matte black fur ripples over a barrel chest and powerful shoulders as damp leaf litter and buttress-tree roots scroll right-to-left behind it in a Central African lowland rainforest. As the stride continues without pause, the skull subtly reshapes\u2014brow ridge thickening, nasal openings widening\u2014while the torso becomes slightly more compact and the coat shifts from deep black to black\u2011brown with a gradual silver-gray saddle emerging across the back; hands and wrists show a smoother, more specialized knuckle-support posture. Mid-morph hybrids knuckle-walk, then slow into a grounded seated stance while remaining centered, one hand still bearing weight on knuckles as the other begins calmly gathering leafy stems to the mouth. In sync, the forest floor transitions from damp soil and leaf litter to darker volcanic earth with scattered basalt rocks; broad-leaf understory gives way to low herbs, large fern fronds, mossy trunks, and bamboo-like stems, suggesting cooler montane air. The fully formed adult *Gorilla beringei* sits and forages calmly, angled right. **Single static locked camera, one unbroken take, centered subject moving right with treadmill background scroll, smooth continuous biologically plausible morph and matching habitat transition.**"
+        }
+      }
+    ],
+    "Generate Video": [
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "04a787432a6cb504f47e9eb6c0f26f4b",
+            "recordId": "04a787432a6cb504f47e9eb6c0f26f4b"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "4cfcfb4e152fdd0da954dabd172ca76e",
+            "recordId": "4cfcfb4e152fdd0da954dabd172ca76e"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "998f4b5610cd97efa7d163fdc0f55365",
+            "recordId": "998f4b5610cd97efa7d163fdc0f55365"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "01b57abdcbdd2d1ef7ec383eff3fb2b8",
+            "recordId": "01b57abdcbdd2d1ef7ec383eff3fb2b8"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "679bfbbf17d6046cf555dd87c1ebe15b",
+            "recordId": "679bfbbf17d6046cf555dd87c1ebe15b"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "6361cb821055ed74b03bf048188b3526",
+            "recordId": "6361cb821055ed74b03bf048188b3526"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "69f3b94b75fbf669ebd926e551e3e3a8",
+            "recordId": "69f3b94b75fbf669ebd926e551e3e3a8"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "8721f575f2db98565b2bc2d5efb6b63c",
+            "recordId": "8721f575f2db98565b2bc2d5efb6b63c"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "370161350ffbc0670a09b1b6f676410e",
+            "recordId": "370161350ffbc0670a09b1b6f676410e"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "f94b29f5dae9680d2d338e77059c443f",
+            "recordId": "f94b29f5dae9680d2d338e77059c443f"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "f585ef0540c598713e6d87684f020f82",
+            "recordId": "f585ef0540c598713e6d87684f020f82"
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "a23001aa0b8bee7805a69594810ab398",
+            "recordId": "a23001aa0b8bee7805a69594810ab398"
+          }
+        }
+      }
+    ],
+    "Format and Display image Results": [
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047917225_igzatl_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047913936_ckwt4i_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047917573_m3fank_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047920066_sntpxt_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047914407_irkhi7_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047914196_2yhw98_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047915064_08gcyi_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047915012_e8alkd_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047915581_kbv1rq_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047914385_8dtj73_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047917714_h71ivy_9x16_576x1024.png\"]}"
+        }
+      },
+      {
+        "json": {
+          "img": "{\"resultUrls\":[\"https://tempfile.aiquickdraw.com/workers/nano/image_1766047917619_1pu3yq_9x16_576x1024.png\"]}"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "SPECIES PROMPT GENERATOR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SPECIES PROMPT GENERATOR": {
+      "main": [
+        [
+          {
+            "node": "Number The Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Number The Videos": {
+      "main": [
+        [
+          {
+            "node": "Request Image Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields": {
+      "main": [
+        [
+          {
+            "node": "Group Evolutions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group Evolutions": {
+      "main": [
+        [
+          {
+            "node": "Transition Prompt Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transition Prompt Generator": {
+      "main": [
+        [
+          {
+            "node": "Request Video Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate On Screen Text ": {
+      "main": [
+        [
+          {
+            "node": "Merge Audio via FFmpeg API",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Audio Start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 4.1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Transition Prompt Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "SPECIES PROMPT GENERATOR",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 5.2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "SPECIES PROMPT GENERATOR",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Status": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for image Processing Completion": {
+      "main": [
+        [
+          {
+            "node": "Get Image Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Image Generation": {
+      "main": [
+        [
+          {
+            "node": "Wait for image Processing Completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format and Display image Results": {
+      "main": [
+        [
+          {
+            "node": "Download Ad Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Ad Image": {
+      "main": [
+        [
+          {
+            "node": "Set Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Video1": {
+      "main": [
+        [
+          {
+            "node": "Get Video Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Status": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Format and Display image Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait for image Processing Completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Store Video URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Video Generation": {
+      "main": [
+        [
+          {
+            "node": "Wait for Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Video URLs": {
+      "main": [
+        [
+          {
+            "node": "Concat Videos via FFmpeg API",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Concat Start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concat Start": {
+      "main": [
+        [
+          {
+            "node": "Concat Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concat Wait": {
+      "main": [
+        [
+          {
+            "node": "Concat Poll",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concat Poll": {
+      "main": [
+        [
+          {
+            "node": "Concat Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concat Check": {
+      "main": [
+        [
+          {
+            "node": "Generate On Screen Text ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Concat Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Audio Start": {
+      "main": [
+        [
+          {
+            "node": "Merge Audio Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Audio Wait": {
+      "main": [
+        [
+          {
+            "node": "Merge Audio Poll",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Audio Poll": {
+      "main": [
+        [
+          {
+            "node": "Merge Audio Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Audio Check": {
+      "main": [
+        [
+          {
+            "node": "Add Subtitles Start",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge Audio Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Subtitles Start": {
+      "main": [
+        [
+          {
+            "node": "Add Subtitles Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Subtitles Wait": {
+      "main": [
+        [
+          {
+            "node": "Add Subtitles Poll",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Subtitles Poll": {
+      "main": [
+        [
+          {
+            "node": "Add Subtitles Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Subtitles Check": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Add Subtitles Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e5253bc5-ad88-46d2-9424-4a372ef1ec24",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "025ace4d47184f81016c3a4b2336ab868dbb7f45100ced1575478d3fedc5cd40"
+  },
+  "id": "vW8tiiIsfmnsPRLF",
+  "tags": []
+}
